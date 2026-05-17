@@ -25,24 +25,58 @@ These characters look great in a browser but cause friction in:
 ```bash
 # Fix your clipboard contents instantly
 clipfix --clipboard
-# → "Fixed 12 characters"
+# → "Fixed 0 characters"  (soft mode — only invisible chars replaced)
 
 # Or pipe text through it
-echo "The answer—according to experts—is "yes"." | clipfix
+echo "The answer—according to experts—is "yes"." | clipfix --hard
 # → The answer--according to experts--is "yes".
+```
+
+## Two Sanitization Modes
+
+clipfix ships with two modes to handle different use cases.
+
+### Soft mode (default)
+
+Removes only **invisible and structurally harmful** characters — zero-width spaces, BOM markers, and directional control characters. Non-breaking spaces are normalized to regular spaces.
+
+Typographic characters like em dashes, curly quotes, arrows, and guillemets are **left untouched**. This makes soft mode safe for:
+
+- Email delivery pipelines (multilingual prose, Italian/French/Spanish text)
+- Rich-text documents where em dashes and smart quotes are intentional
+- Any pipeline where you want clean encoding but not flattened typography
+
+```bash
+echo "ospiti internazionali — da Israele" | clipfix
+# → ospiti internazionali — da Israele   (em dash preserved)
+```
+
+### Hard mode (`--hard` / `-H`)
+
+Replaces **all known Unicode punctuation** with ASCII equivalents — everything soft mode does, plus em dashes → `--`, curly quotes → `"'`, arrows → `->`, math symbols, and more.
+
+Use this when targeting:
+- Terminal output or shell scripts
+- Source code and config files
+- Plain-text formats that must be ASCII-safe
+
+```bash
+echo "The answer—"yes"—according to experts." | clipfix --hard
+# → The answer--"yes"--according to experts.
 ```
 
 ## Why clipfix?
 
 - **Zero-config**: Install and use immediately
 - **Blazing fast**: Rust-powered, handles huge files instantly
+- **Safe default**: Soft mode protects natural-language text from over-sanitization
 - **Clipboard-native**: `--clipboard` flag for copy-paste workflows
 - **Unix-friendly**: Pipes, redirects, stdin/stdout — it just works
 - **Invisible character killer**: Removes zero-width spaces, BOMs, and other invisible Unicode gotchas
 
 ## Installation
 
-### macOS (Homebrew coming soon)
+### macOS (via npm)
 ```bash
 npm install -g clipfix
 ```
@@ -60,33 +94,59 @@ cargo install --path .
 Copy text from anywhere, then:
 ```bash
 clipfix --clipboard
-# Fixed 8 characters
+# Fixed 0 characters  (soft mode — only invisible chars replaced)
+
+clipfix --hard --clipboard
+# Fixed 8 characters  (hard mode — all typographic chars replaced)
 ```
 Your clipboard now contains sanitized text. Paste away.
 
 ### Pipe Mode (Power User)
 ```bash
-# Fix a file
-cat document.md | clipfix > fixed.md
+# Soft sanitize a file (default — safe for prose and emails)
+cat email.md | clipfix > email-clean.md
 
-# Fix LLM output directly
-chatgpt "explain quantum computing" | clipfix
+# Hard sanitize LLM output for terminal use
+chatgpt "explain quantum computing" | clipfix --hard
 
 # Chain with other tools
-echo "Error — code ≠ 0" | clipfix | grep "code != 0"
+echo "Error — code ≠ 0" | clipfix --hard | grep "code != 0"
 ```
+
+### List All Replaced Characters
+```bash
+clipfix --list-replacements
+```
+Prints a full table of every character clipfix handles, grouped by mode. Useful for auditing what gets changed in your pipeline.
 
 ### Command Reference
 ```
 clipfix [OPTIONS]
 
 Options:
-  -c, --clipboard  Read from and write to clipboard
-  -h, --help       Print help
-  -V, --version    Print version
+  -S, --soft               Soft sanitize: remove only invisible/structural characters (default)
+  -H, --hard               Hard sanitize: also replace typographic characters with ASCII equivalents
+  -c, --clipboard          Read from and write to clipboard
+  -l, --list-replacements  List all characters replaced by clipfix, grouped by mode
+  -h, --help               Print help
+  -V, --version            Print version
 ```
 
 ## What Gets Fixed
+
+### Soft mode (default) — always applied
+
+| Character | Unicode | Becomes | Why |
+|-----------|---------|---------|-----|
+| ` ` | U+00A0 | ` ` (space) | Non-breaking spaces cause invisible layout bugs |
+| `​` | U+200B | *(removed)* | Zero-width spaces break parsers silently |
+| `‌` | U+200C | *(removed)* | Zero-width non-joiner |
+| `‍` | U+200D | *(removed)* | Zero-width joiner |
+| `﻿` | U+FEFF | *(removed)* | BOM markers corrupt file parsing |
+| `‎` | U+200E | *(removed)* | Left-to-right mark |
+| `‏` | U+200F | *(removed)* | Right-to-left mark |
+
+### Hard mode only (`--hard`) — typographic characters
 
 | Character | Unicode | Becomes | When You'll Hit This |
 |-----------|---------|---------|---------------------|
@@ -98,20 +158,29 @@ Options:
 | `→` | U+2192 | `->` | Documentation flow diagrams |
 | `←` | U+2190 | `<-` | Arrow functions, assignment |
 | `⇒` | U+21D2 | `=>` | Logic symbols, arrows |
+| `⇐` | U+21D0 | `<=` | Double arrow left |
+| `«` `»` | U+00AB/U+00BB | `"` | French/Italian guillemets |
 | `×` | U+00D7 | `*` | Math operations |
+| `÷` | U+00F7 | `/` | Division |
+| `±` | U+00B1 | `+/-` | Plus-minus |
 | `≠` | U+2260 | `!=` | Code comparisons |
 | `≤` `≥` | U+2264/U+2265 | `<=` `>=` | Mathematical comparisons |
 | `•` | U+2022 | `*` | Bullet points |
-| ` ` | U+00A0 | ` ` | Non-breaking spaces (invisible!) |
-| `​` | U+200B | *(removed)* | Zero-width spaces (breaks everything!) |
-| `﻿` | U+FEFF | *(removed)* | BOM markers |
-| `←` `→` | U+2190/U+2192 | `<-` `->` | Arrows in documentation |
+| `′` `″` | U+2032/U+2033 | `'` `"` | Prime marks |
+| `―` | U+2015 | `--` | Horizontal bar |
 
-**Plus 10+ more** — see full list with `clipfix --help`
+Run `clipfix --list-replacements` for the complete machine-readable list.
 
 ## Real-World Examples
 
-### Before/After: LLM Chat Output
+### Email pipeline (soft mode — default)
+```
+Input:  ospiti internazionali — da Israele, dagli Stati Uniti
+Output: ospiti internazionali — da Israele, dagli Stati Uniti
+        (em dash preserved — soft mode only strips invisible chars)
+```
+
+### LLM chat output (hard mode)
 ```
 Input:  According to the docs—when using React's useEffect—you'll need…
 Output: According to the docs--when using React's useEffect--you'll need...
@@ -120,7 +189,7 @@ Input:  The error "undefined" occurred in module "utils".
 Output: The error "undefined" occurred in module "utils".
 ```
 
-### Before/After: Technical Documentation
+### Technical documentation (hard mode)
 ```
 Input:  Run: git push → GitHub → CI/CD → Production
 Output: Run: git push -> GitHub -> CI/CD -> Production
@@ -129,10 +198,10 @@ Input:  If x ≠ y and x ≤ 100, then x × 2 ≥ 0
 Output: If x != y and x <= 100, then x * 2 >= 0
 ```
 
-### Before/After: Invisible Character Nightmare
+### Invisible character nightmare
 ```
 Input:  Some​text​with​zero​width​spaces  (looks normal!)
-Output: Sometextwithzerowidthspaces     (actually clean)
+Output: Sometextwithzerowidthspaces     (actually clean — soft mode handles this)
 ```
 
 ## Pro Tips
@@ -140,19 +209,33 @@ Output: Sometextwithzerowidthspaces     (actually clean)
 **1. Alias for quick access**
 ```bash
 alias cf='clipfix --clipboard'
-# Now just type `cf` after copying anything
+alias cfh='clipfix --hard --clipboard'
 ```
 
 **2. Editor integration**
 ```vim
-" In .vimrc — fix selected text
+" In .vimrc — soft sanitize selected text (safe for prose)
 :'<,'>!clipfix
+
+" Hard sanitize selected text (ASCII-only output)
+:'<,'>!clipfix --hard
 ```
 
-**3. Git pre-commit hook**
+**3. Email automation pipeline**
 ```bash
-# Reject commits with fancy punctuation
-git diff --cached | clipfix | diff - <(git diff --cached)
+# Safe default — won't mangle multilingual prose
+cat draft-email.txt | clipfix | sendmail recipient@example.com
+```
+
+**4. Git pre-commit hook (hard mode)**
+```bash
+# Reject commits with fancy punctuation in source files
+git diff --cached | clipfix --hard | diff - <(git diff --cached)
+```
+
+**5. Audit what will change**
+```bash
+clipfix --list-replacements
 ```
 
 ## License
