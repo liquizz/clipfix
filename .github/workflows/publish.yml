@@ -6,6 +6,10 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   build-and-publish:
     runs-on: macos-latest
@@ -59,11 +63,9 @@ jobs:
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\\n');
           "
       
-      - name: Publish to npm
+      - name: Publish to npm with provenance
         working-directory: ./npm
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
       
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
