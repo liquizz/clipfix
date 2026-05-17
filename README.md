@@ -38,17 +38,16 @@ clipfix ships with two modes to handle different use cases.
 
 ### Soft mode (default)
 
-Removes only **invisible and structurally harmful** characters — zero-width spaces, BOM markers, and directional control characters. Non-breaking spaces are normalized to regular spaces.
+Removes invisible/structural characters **and** the typographic characters most commonly produced by AI text generators — curly quotes (`""''`), em/en dashes (`—–`), and ellipsis (`…`). Arrows, math symbols, and guillemets are left untouched.
 
-Typographic characters like em dashes, curly quotes, arrows, and guillemets are **left untouched**. This makes soft mode safe for:
-
-- Email delivery pipelines (multilingual prose, Italian/French/Spanish text)
-- Rich-text documents where em dashes and smart quotes are intentional
-- Any pipeline where you want clean encoding but not flattened typography
+This makes soft mode the right default for email delivery pipelines: it strips the characters that make a message look AI-generated while leaving legitimate typographic punctuation intact.
 
 ```bash
 echo "ospiti internazionali — da Israele" | clipfix
-# → ospiti internazionali — da Israele   (em dash preserved)
+# → ospiti internazionali -- da Israele   (em dash replaced)
+
+echo "He said "ciao" to everyone" | clipfix
+# → He said "ciao" to everyone
 ```
 
 ### Hard mode (`--hard` / `-H`)
@@ -136,6 +135,8 @@ Options:
 
 ### Soft mode (default) — always applied
 
+Removes invisible/structural characters **and** the typographic characters most commonly produced by AI text generators (curly quotes, em/en dashes, ellipsis).
+
 | Character | Unicode | Becomes | Why |
 |-----------|---------|---------|-----|
 | ` ` | U+00A0 | ` ` (space) | Non-breaking spaces cause invisible layout bugs |
@@ -145,16 +146,16 @@ Options:
 | `﻿` | U+FEFF | *(removed)* | BOM markers corrupt file parsing |
 | `‎` | U+200E | *(removed)* | Left-to-right mark |
 | `‏` | U+200F | *(removed)* | Right-to-left mark |
+| `'` `'` | U+2018/U+2019 | `'` | AI-generated curly single quotes |
+| `"` `"` | U+201C/U+201D | `"` | AI-generated curly double quotes |
+| `—` | U+2014 | `--` | AI-generated em dashes |
+| `–` | U+2013 | `-` | AI-generated en dashes |
+| `…` | U+2026 | `...` | AI-generated ellipsis |
 
-### Hard mode only (`--hard`) — typographic characters
+### Hard mode only (`--hard`) — remaining typographic characters
 
 | Character | Unicode | Becomes | When You'll Hit This |
 |-----------|---------|---------|---------------------|
-| `—` | U+2014 | `--` | LLM-generated prose with em dashes |
-| `–` | U+2013 | `-` | Date ranges like 2020–2024 |
-| `…` | U+2026 | `...` | Trailing thoughts... |
-| `"` `"` | U+201C/U+201D | `"` | Copied quotes from web articles |
-| `'` `'` | U+2018/U+2019 | `'` | Contractions and possessives |
 | `→` | U+2192 | `->` | Documentation flow diagrams |
 | `←` | U+2190 | `<-` | Arrow functions, assignment |
 | `⇒` | U+21D2 | `=>` | Logic symbols, arrows |
@@ -176,8 +177,8 @@ Run `clipfix --list-replacements` for the complete machine-readable list.
 ### Email pipeline (soft mode — default)
 ```
 Input:  ospiti internazionali — da Israele, dagli Stati Uniti
-Output: ospiti internazionali — da Israele, dagli Stati Uniti
-        (em dash preserved — soft mode only strips invisible chars)
+Output: ospiti internazionali -- da Israele, dagli Stati Uniti
+        (em dash replaced — soft mode removes AI-signature punctuation)
 ```
 
 ### LLM chat output (hard mode)

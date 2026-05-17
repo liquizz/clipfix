@@ -12,12 +12,12 @@ fn em_dash_hard_mode() {
 }
 
 #[test]
-fn em_dash_soft_mode_preserved() {
+fn em_dash_soft_mode_replaced() {
     let mut cmd = Command::cargo_bin("clipfix").unwrap();
     cmd.write_stdin("Hello \u{2014} world\n")
         .assert()
         .success()
-        .stdout("Hello \u{2014} world\n");
+        .stdout("Hello -- world\n");
 }
 
 #[test]
@@ -31,12 +31,12 @@ fn curly_quotes_hard_mode() {
 }
 
 #[test]
-fn curly_quotes_soft_mode_preserved() {
+fn curly_quotes_soft_mode_replaced() {
     let mut cmd = Command::cargo_bin("clipfix").unwrap();
     cmd.write_stdin("He said \u{201C}hello\u{201D}\n")
         .assert()
         .success()
-        .stdout("He said \u{201C}hello\u{201D}\n");
+        .stdout("He said \"hello\"\n");
 }
 
 #[test]
@@ -58,13 +58,13 @@ fn soft_mode_removes_bom() {
 }
 
 #[test]
-fn soft_flag_explicit_preserves_em_dash() {
+fn soft_flag_explicit_replaces_em_dash() {
     let mut cmd = Command::cargo_bin("clipfix").unwrap();
     cmd.arg("-S")
         .write_stdin("dash \u{2014} here\n")
         .assert()
         .success()
-        .stdout("dash \u{2014} here\n");
+        .stdout("dash -- here\n");
 }
 
 #[test]
@@ -176,10 +176,10 @@ fn ellipsis_and_em_dash_hard_mode() {
 }
 
 #[test]
-fn ellipsis_and_em_dash_soft_mode_preserved() {
+fn ellipsis_and_em_dash_soft_mode_replaced() {
     let mut cmd = Command::cargo_bin("clipfix").unwrap();
     cmd.write_stdin("Wait\u{2026} \u{2014} now\n")
         .assert()
         .success()
-        .stdout("Wait\u{2026} \u{2014} now\n");
+        .stdout("Wait... -- now\n");
 }

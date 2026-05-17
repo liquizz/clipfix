@@ -1,9 +1,9 @@
 /// Sanitization mode controlling which Unicode characters are replaced.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Mode {
-    /// Remove only invisible / structurally harmful characters.
-    /// Typographic characters (em dashes, curly quotes, arrows, …) are left untouched.
-    /// Safe for natural-language prose, multilingual email, and rich-text pipelines.
+    /// Remove invisible/structural characters and AI-signature typographic characters
+    /// (em dashes, curly quotes, ellipsis). Arrows, math symbols, and guillemets
+    /// are left untouched. Safe for email delivery pipelines.
     #[default]
     Soft,
 
@@ -25,8 +25,8 @@ pub struct Replacement {
 
 /// **Soft mode** replacements — applied in *both* soft and hard modes.
 ///
-/// Only invisible or structurally harmful characters are included here.
-/// These replacements never alter the visible appearance or meaning of text.
+/// Includes invisible/structural characters and AI-signature typographic characters
+/// (curly quotes, em/en dashes, ellipsis) that signal machine-generated content.
 pub const SOFT_REPLACEMENTS: &[Replacement] = &[
     Replacement {
         from: '\u{00A0}',
@@ -63,14 +63,6 @@ pub const SOFT_REPLACEMENTS: &[Replacement] = &[
         description: "Right-to-left mark",
         to: "",
     },
-];
-
-/// **Hard-only** replacements — applied exclusively in hard mode.
-///
-/// These are visible typographic characters that are intentional in natural-language
-/// writing (em dashes, curly quotes, guillemets, arrows, math symbols, …).
-/// They are only replaced when the caller explicitly requests hard sanitization.
-pub const HARD_ONLY_REPLACEMENTS: &[Replacement] = &[
     Replacement {
         from: '\u{2018}',
         description: "Left single quotation mark",
@@ -106,6 +98,13 @@ pub const HARD_ONLY_REPLACEMENTS: &[Replacement] = &[
         description: "Horizontal ellipsis",
         to: "...",
     },
+];
+
+/// **Hard-only** replacements — applied exclusively in hard mode.
+///
+/// Visible typographic characters not covered by soft mode: arrows, guillemets,
+/// math symbols, and prime marks.
+pub const HARD_ONLY_REPLACEMENTS: &[Replacement] = &[
     Replacement {
         from: '\u{2022}',
         description: "Bullet",
@@ -298,21 +297,21 @@ mod tests {
     }
 
     #[test]
-    fn soft_preserves_em_dash() {
-        assert_eq!(fix_text("\u{2014}", Mode::Soft), "\u{2014}");
+    fn soft_replaces_em_dash() {
+        assert_eq!(fix_text("\u{2014}", Mode::Soft), "--");
     }
 
     #[test]
-    fn soft_preserves_curly_quotes() {
+    fn soft_replaces_curly_quotes() {
         assert_eq!(
             fix_text("\u{201C}hello\u{201D}", Mode::Soft),
-            "\u{201C}hello\u{201D}"
+            "\"hello\""
         );
     }
 
     #[test]
-    fn soft_preserves_ellipsis() {
-        assert_eq!(fix_text("\u{2026}", Mode::Soft), "\u{2026}");
+    fn soft_replaces_ellipsis() {
+        assert_eq!(fix_text("\u{2026}", Mode::Soft), "...");
     }
 
     #[test]

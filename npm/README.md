@@ -12,9 +12,9 @@ npm install -g clipfix
 
 ## Two Modes
 
-**Soft mode (default)** — removes only invisible/structural characters (zero-width spaces, BOM, directional marks). Safe for prose, email, and multilingual text. Em dashes, curly quotes, and arrows are preserved.
+**Soft mode (default)** — removes invisible/structural characters and AI-signature typographic characters (curly quotes `""''`, em/en dashes `—–`, ellipsis `…`). Arrows, math symbols, and guillemets are left untouched. Safe for email delivery and multilingual text.
 
-**Hard mode (`--hard`)** — also replaces all typographic Unicode with ASCII equivalents. Use for terminal output, source code, or strictly ASCII pipelines.
+**Hard mode (`--hard`)** — also replaces all remaining typographic Unicode with ASCII equivalents. Use for terminal output, source code, or strictly ASCII pipelines.
 
 ## Usage
 
@@ -69,6 +69,11 @@ Options:
 | U+200B | *(removed)* | Zero-width space |
 | U+FEFF | *(removed)* | BOM marker |
 | U+200E/F | *(removed)* | Directional marks |
+| U+2018/19 | `'` | Curly single quotes |
+| U+201C/D | `"` | Curly double quotes |
+| U+2014 | `--` | Em dash |
+| U+2013 | `-` | En dash |
+| U+2026 | `...` | Ellipsis |
 
 ### Hard mode only
 
