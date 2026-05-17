@@ -1,6 +1,6 @@
 # clipfix
 
-> Fix copy-pasted text from LLMs and the web — instantly convert fancy Unicode punctuation to plain ASCII.
+> Fix copy-pasted text from LLMs and the web -- instantly convert fancy Unicode punctuation to plain ASCII.
 
 ## Installation
 
@@ -12,9 +12,9 @@ npm install -g clipfix
 
 ## Two Modes
 
-**Soft mode (default)** — removes invisible/structural characters and AI-signature typographic characters (curly quotes `""''`, em/en dashes `—–`, ellipsis `…`). Arrows, math symbols, and guillemets are left untouched.
+**Soft mode (default)** -- removes invisible/structural characters and AI-signature typographic characters (curly quotes `""''`, em/en dashes `---`, ellipsis `...`). Arrows, math symbols, and guillemets are left untouched.
 
-**Hard mode (`--hard`)** — also replaces all remaining typographic Unicode with ASCII equivalents. Useful for terminal output, source code, or strictly ASCII pipelines.
+**Hard mode (`--hard`)** -- also replaces all remaining typographic Unicode with ASCII equivalents. Useful for terminal output, source code, or strictly ASCII pipelines.
 
 ## Usage
 
@@ -89,7 +89,7 @@ Plus 15+ more — run `clipfix --list-replacements` for the full list.
 
 ## Why?
 
-LLMs love fancy punctuation that breaks in terminals, code editors, and config files. clipfix sanitizes it instantly — with a safe default that won't mangle your multilingual email copy.
+LLMs love fancy punctuation that breaks in terminals, code editors, and config files. clipfix sanitizes it instantly -- with a safe default that won't mangle your multilingual email copy.
 
 ## License
 

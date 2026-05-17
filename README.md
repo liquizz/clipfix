@@ -1,13 +1,13 @@
 # clipfix
 
-> Fix copy-pasted text from LLMs and the web — instantly convert fancy Unicode punctuation to plain ASCII.
+> Fix copy-pasted text from LLMs and the web -- instantly convert fancy Unicode punctuation to plain ASCII.
 
 ## The Problem
 
 You copy text from ChatGPT, Claude, or a webpage, paste it into your terminal or code editor, and... it breaks. Or looks weird. Or your linter complains.
 
 **LLMs love fancy punctuation:**
-- Em dashes (`—`) instead of double hyphens (`--`)
+- Em dashes (`--`) instead of double hyphens (`--`)
 - Curly quotes (`""`) instead of straight quotes (`""`)
 - Unicode arrows (`→`) instead of ASCII arrows (`->`)
 - Zero-width spaces that cause cryptic errors
@@ -25,7 +25,7 @@ These characters look great in a browser but cause friction in:
 ```bash
 # Fix your clipboard contents instantly
 clipfix --clipboard
-# → "Fixed 0 characters"  (soft mode — only invisible chars replaced)
+# → "Fixed 0 characters"  (soft mode -- only invisible chars replaced)
 
 # Or pipe text through it
 echo "The answer—according to experts—is "yes"." | clipfix --hard
@@ -38,7 +38,7 @@ clipfix ships with two modes to handle different use cases.
 
 ### Soft mode (default)
 
-Removes invisible/structural characters **and** the typographic characters most commonly produced by AI text generators — curly quotes (`""''`), em/en dashes (`—–`), and ellipsis (`…`). Arrows, math symbols, and guillemets are left untouched.
+Removes invisible/structural characters **and** the typographic characters most commonly produced by AI text generators -- curly quotes (`""''`), em/en dashes (`---`), and ellipsis (`...`). Arrows, math symbols, and guillemets are left untouched.
 
 ```bash
 echo "ospiti internazionali — da Israele" | clipfix
@@ -50,7 +50,7 @@ echo "He said "ciao" to everyone" | clipfix
 
 ### Hard mode (`--hard` / `-H`)
 
-Replaces **all known Unicode punctuation** with ASCII equivalents — everything soft mode does, plus arrows → `->`, math symbols, and more.
+Replaces **all known Unicode punctuation** with ASCII equivalents -- everything soft mode does, plus arrows → `->`, math symbols, and more.
 
 Use this when targeting:
 - Terminal output or shell scripts
@@ -68,7 +68,7 @@ echo "The answer—"yes"—according to experts." | clipfix --hard
 - **Blazing fast**: Rust-powered, handles huge files instantly
 - **Safe default**: Soft mode protects natural-language text from over-sanitization
 - **Clipboard-native**: `--clipboard` flag for copy-paste workflows
-- **Unix-friendly**: Pipes, redirects, stdin/stdout — it just works
+- **Unix-friendly**: Pipes, redirects, stdin/stdout -- it just works
 - **Invisible character killer**: Removes zero-width spaces, BOMs, and other invisible Unicode gotchas
 
 ## Installation
@@ -91,23 +91,23 @@ cargo install --path .
 Copy text from anywhere, then:
 ```bash
 clipfix --clipboard
-# Fixed 0 characters  (soft mode — only invisible chars replaced)
+# Fixed 0 characters  (soft mode -- only invisible chars replaced)
 
 clipfix --hard --clipboard
-# Fixed 8 characters  (hard mode — all typographic chars replaced)
+# Fixed 8 characters  (hard mode -- all typographic chars replaced)
 ```
 Your clipboard now contains sanitized text. Paste away.
 
 ### Pipe Mode (Power User)
 ```bash
-# Soft sanitize a file (default — safe for prose and emails)
+# Soft sanitize a file (default -- safe for prose and emails)
 cat email.md | clipfix > email-clean.md
 
 # Hard sanitize LLM output for terminal use
 chatgpt "explain quantum computing" | clipfix --hard
 
 # Chain with other tools
-echo "Error — code ≠ 0" | clipfix --hard | grep "code != 0"
+echo "Error -- code ≠ 0" | clipfix --hard | grep "code != 0"
 ```
 
 ### List All Replaced Characters
@@ -131,7 +131,7 @@ Options:
 
 ## What Gets Fixed
 
-### Soft mode (default) — always applied
+### Soft mode (default) -- always applied
 
 Removes invisible/structural characters **and** the typographic characters most commonly produced by AI text generators (curly quotes, em/en dashes, ellipsis).
 
@@ -172,7 +172,7 @@ Run `clipfix --list-replacements` for the complete machine-readable list.
 
 ## Real-World Examples
 
-### Email pipeline (soft mode — default)
+### Email pipeline (soft mode -- default)
 ```
 Input:  ospiti internazionali — da Israele, dagli Stati Uniti
 Output: ospiti internazionali -- da Israele, dagli Stati Uniti
@@ -225,7 +225,7 @@ git diff --cached | clipfix --hard | diff - <(git diff --cached)
 
 ## License
 
-MIT — do whatever you want with it.
+MIT -- do whatever you want with it.
 
 ---
 
