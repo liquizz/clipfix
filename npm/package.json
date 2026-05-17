@@ -1,12 +1,13 @@
 {
   "name": "clipfix",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Fix copy-pasted text from LLMs - convert fancy Unicode punctuation to plain ASCII",
   "main": "clipfix.js",
   "bin": {
     "clipfix": "./clipfix.js"
   },
   "files": [
+    "README.md",
     "clipfix.js",
     "bin/clipfix"
   ],
