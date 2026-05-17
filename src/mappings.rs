@@ -3,7 +3,7 @@
 pub enum Mode {
     /// Remove invisible/structural characters and AI-signature typographic characters
     /// (em dashes, curly quotes, ellipsis). Arrows, math symbols, and guillemets
-    /// are left untouched. Safe for email delivery pipelines.
+    /// are left untouched.
     #[default]
     Soft,
 

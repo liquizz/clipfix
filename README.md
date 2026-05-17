@@ -7,7 +7,7 @@
 You copy text from ChatGPT, Claude, or a webpage, paste it into your terminal or code editor, and... it breaks. Or looks weird. Or your linter complains.
 
 **LLMs love fancy punctuation:**
-- Em dashes (`--`) instead of double hyphens (`--`)
+- Em dashes (`—`) instead of double hyphens (`--`)
 - Curly quotes (`""`) instead of straight quotes (`""`)
 - Unicode arrows (`→`) instead of ASCII arrows (`->`)
 - Zero-width spaces that cause cryptic errors
@@ -100,7 +100,7 @@ Your clipboard now contains sanitized text. Paste away.
 
 ### Pipe Mode (Power User)
 ```bash
-# Soft sanitize a file (default -- safe for prose and emails)
+# Soft sanitize a file
 cat email.md | clipfix > email-clean.md
 
 # Hard sanitize LLM output for terminal use

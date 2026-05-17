@@ -28,7 +28,7 @@ clipfix --hard --clipboard   # hard mode
 
 ### Pipe Mode
 ```bash
-# Soft sanitize a file (safe for prose and emails)
+# Soft sanitize a file
 cat email.md | clipfix > email-clean.md
 
 # Hard sanitize — flatten all Unicode punctuation to ASCII
@@ -89,7 +89,7 @@ Plus 15+ more — run `clipfix --list-replacements` for the full list.
 
 ## Why?
 
-LLMs love fancy punctuation that breaks in terminals, code editors, and config files. clipfix sanitizes it instantly -- with a safe default that won't mangle your multilingual email copy.
+LLMs love fancy punctuation that breaks in terminals, code editors, and config files.
 
 ## License
 
