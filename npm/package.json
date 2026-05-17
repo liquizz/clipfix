@@ -1,9 +1,49 @@
 {
   "name": "clipfix",
   "version": "0.1.0",
-  "description": "Replace LLM special punctuation with ASCII equivalents",
-  "bin": { "clipfix": "./clipfix.js" },
-  "files": ["clipfix.js", "bin/*"],
-  "os": ["darwin"],
-  "cpu": ["arm64", "x64"]
+  "description": "Fix copy-pasted text from LLMs - convert fancy Unicode punctuation to plain ASCII",
+  "main": "clipfix.js",
+  "bin": {
+    "clipfix": "./clipfix.js"
+  },
+  "files": [
+    "clipfix.js",
+    "bin/clipfix"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64",
+    "x64"
+  ],
+  "scripts": {
+    "test": "echo 'Tests run via cargo test' && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquizz/clipfix.git"
+  },
+  "keywords": [
+    "cli",
+    "unicode",
+    "ascii",
+    "punctuation",
+    "smart-quotes",
+    "llm",
+    "clipboard",
+    "text-processing",
+    "typography",
+    "terminal",
+    "macos"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/liquizz/clipfix/issues"
+  },
+  "homepage": "https://github.com/liquizz/clipfix#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
 }
