@@ -1,0 +1,9 @@
+{
+  "name": "clipfix",
+  "version": "0.1.0",
+  "description": "Replace LLM special punctuation with ASCII equivalents",
+  "bin": { "clipfix": "./clipfix.js" },
+  "files": ["clipfix.js", "bin/*"],
+  "os": ["darwin"],
+  "cpu": ["arm64", "x64"]
+}
