@@ -40,8 +40,6 @@ clipfix ships with two modes to handle different use cases.
 
 Removes invisible/structural characters **and** the typographic characters most commonly produced by AI text generators — curly quotes (`""''`), em/en dashes (`—–`), and ellipsis (`…`). Arrows, math symbols, and guillemets are left untouched.
 
-This makes soft mode the right default for email delivery pipelines: it strips the characters that make a message look AI-generated while leaving legitimate typographic punctuation intact.
-
 ```bash
 echo "ospiti internazionali — da Israele" | clipfix
 # → ospiti internazionali -- da Israele   (em dash replaced)
@@ -52,7 +50,7 @@ echo "He said "ciao" to everyone" | clipfix
 
 ### Hard mode (`--hard` / `-H`)
 
-Replaces **all known Unicode punctuation** with ASCII equivalents — everything soft mode does, plus em dashes → `--`, curly quotes → `"'`, arrows → `->`, math symbols, and more.
+Replaces **all known Unicode punctuation** with ASCII equivalents — everything soft mode does, plus arrows → `->`, math symbols, and more.
 
 Use this when targeting:
 - Terminal output or shell scripts
@@ -215,28 +213,14 @@ alias cfh='clipfix --hard --clipboard'
 
 **2. Editor integration**
 ```vim
-" In .vimrc — soft sanitize selected text (safe for prose)
-:'<,'>!clipfix
-
 " Hard sanitize selected text (ASCII-only output)
 :'<,'>!clipfix --hard
 ```
 
-**3. Email automation pipeline**
-```bash
-# Safe default — won't mangle multilingual prose
-cat draft-email.txt | clipfix | sendmail recipient@example.com
-```
-
-**4. Git pre-commit hook (hard mode)**
+**3. Git pre-commit hook (hard mode)**
 ```bash
 # Reject commits with fancy punctuation in source files
 git diff --cached | clipfix --hard | diff - <(git diff --cached)
-```
-
-**5. Audit what will change**
-```bash
-clipfix --list-replacements
 ```
 
 ## License
